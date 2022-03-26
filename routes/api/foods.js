@@ -1,39 +1,16 @@
-const { response } = require("express");
+
 const express = require("express");
 const res = require("express/lib/response");
 const { append } = require("express/lib/response");
 const router = express.Router();
-const fetch = require("node-fetch");
 const { restart } = require("nodemon");
-//const { addItemToMeal } = require("../../helpers");
 
-const meals = require('../../Meals');
+const Meal = require('../../models/meal');
 
-const getData = require("../../helpers").getData;
-const searchBrandItem = require("../../helpers").searchBrandItem;
-const searchById = require("../../helpers").searchById;
-const searchId = require("../../helpers").searchId;
-const searchNamesList = require("../../helpers").searchNamesList;
-const searchTest = require("../../helpers").searchTest;
-const listData = require("../../helpers").listData;
-const addItemToMeal = require("../../helpers").addItemToMeal;
-//const api_key = 'mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9';
+const {getData, searchBrandItem, searchByFdcId, searchId, searchNamesList, searchTest, listData, addItemToMeal, addToNewMeal, deleteFood} = require("../../middleware/helpers");
 
-//fdcId = 454004 //apple
-
-//url = 'https://api.nal.usda.gov/fdc/v1/food/454005/?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9'
-//get for single item /v1/food/{fcdId}
-
-
-//my API    /search
-//localhost:5000/api/foods/search/?query=banana
-
-//  searchId/:id
-//localhost:5000/api/foods/search/1102653
-
-// /post    requires parameters etc
-//
-
+const fdcDatabase = 'https://api.nal.usda.gov/fdc/v1/foods/'
+const api_key = 'mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9';
 
 
 router.get('/', async (req, res) => {
@@ -42,104 +19,152 @@ router.get('/', async (req, res) => {
 
     let foodData = await getData(url);
 
-    // res.json(foodData.foods);
-    res.json(foodData.foods[0].foodNutrients);
+    res.json(foodData);
+    // res.json(foodData.foods[0].foodNutrients);
 
-    //res.status(200).json({"success": true});
+    // res.status(200).json({"success": true});
 });
 
 
 
 router.get('/meals', async (req, res) => {
-    res.json(meals);
+
+ 
+    try {
+        const meals = await Meal.find()
+        res.json(meals);
+
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+
+    }
+    
 })
 
-router.post('/meals/:id/:fdcId', async (req, res) => {
-    
-    const found = meals.some(meal => meal.id === parseInt(req.params.id));
 
-    //let nutrientIds = '208,255,601,203,307,204,606,645,646,205,209,291,269,'
+router.post('/addToNewMeal/:fdcId', async (req, res, next) => {
     let nutrientIds = '208,255,204,205,203';
     let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.fdcId}?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9&format=abridged&nutrients=${nutrientIds}`
 
-    let data = [];
-    if (found) {
-        await addItemToMeal(data, url);
+    const grams = req.query.grams;
+    let mealId = await addToNewMeal(url, grams);
+
+    
+
+    // console.log( mealId );
+    if (!mealId) {
+        let fdcId = req.params.fdcId
+        res.status(404).json({"error": `fdcId ${fdcId} not found`});
+        return
     }
-
-
-    // let foodInfo = [];
-
-    // let data = await searchById(foodInfo, url);
-
-    // console.log(data)
-    // let newFood = {
-    //     fdcId: req.params.fdcId,
-    //     name: data.description,
-    //     servingSize: "100g",
-    //     foodNutrients: [
-    //         {   //208
-    //             name: "Energy",
-    //             amount: 0,
-    //             unit: "KCAL",
-
-    //         },
-    //         {   //255
-    //             name: "Water",
-    //             amount: 0,
-    //             unit: "G",
-
-    //         },
-    //         {   //204
-    //             name: "Total lipid (fat)",
-    //             amount: 0,
-    //             unit: "G",
-
-    //         },
-    //         {   //205
-    //             name: "Carbohydrate, by difference",
-    //             amount: 0,
-    //             unit: "G",
-
-    //         },
-    //         {   //203
-    //             name: "Protein",
-    //             amount: 0,
-    //             unit: "G",
-
-    //         }
-    //     ]
-    // };
-
-    // for( let i = 0; i < data.foodNutrients.length; i++){
-    //     if (data.foodNutrients[i].number === "208" ){
-    //         newFood.foodNutrients[0].amount = data.foodNutrients[i].amount;
-    //     }
-    //     if (data.foodNutrients[i].number === "255" ){
-    //         newFood.foodNutrients[1].amount = data.foodNutrients[i].amount;
-    //     }
-    //     if (data.foodNutrients[i].number === "204" ){
-    //         newFood.foodNutrients[2].amount = data.foodNutrients[i].amount;
-    //     }
-    //     if (data.foodNutrients[i].number === "205" ){
-    //         newFood.foodNutrients[3].amount = data.foodNutrients[i].amount;
-    //     }
-    //     if (data.foodNutrients[i].number === "203" ){
-    //         newFood.foodNutrients[4].amount = data.foodNutrients[i].amount;
-    //     }
-        
-    // }
-
-    // if (found) {
-    //     meals[0].foods.push(newFood)
-    // }
-
-    res.json(meals);
+    
+    try {
+        const response = await Meal.findById({_id: mealId});
+        console.log("response", response)
+        res.status(201).json(response);
+    }catch (err){
+        res.status(500).json({ message: err.message })
+    }
+   
 })
 
-router.get('/search', async (req, res) => {
+router.post('/addToMeal/:mealId/:fdcId', async (req, res, next) => {
+
+
+    //fdcId is foodid
+    let nutrientIds = '208,255,204,205,203';
+    //606= sat fat, 645=monounsat, 646= polyunsat, 291 = dietary fiber, 269 total sugars
+    let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.fdcId}?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9&format=abridged&nutrients=${nutrientIds}`
+
+    ////////////
+    const grams = req.query.grams;
+    /////////////
+    let mealId = req.params.mealId;
+    // console.log("here")
+    let valid = await addItemToMeal(url, mealId, grams);
+
+    console.log("valid", valid);
+
+    try{
+        // console.log("in router try bracks");
+        const meal = await Meal.findById({_id: mealId});
+        res.status(201).json(meal);
+    } catch(err){
+        res.status(500).json({message: err.message});
+    }
+    // if (valid) {
+
+    //     //was findOne
+
+    //     // Meal.findById({_id: mealId}, function(err,docs){
+    //     //     if (err){
+    //     //         console.log(err);
+
+    //     //     } else{
+    //     //         res.status(201).json(docs);
+    //     //     }
+            
+    //     // })
+
+    //     // Meal.find({},function(err,docs){
+    //     //     res.status(201).json(docs);
+    //     // })
+    // } else {
+    //     res.status(400);
+    // }
     
-    let url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${req.query.query}&dataType=Foundation&api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9`
+})
+
+router.post('/addMultipleFoods', async(req, res, next) =>{
+
+})
+
+router.delete('/deleteFood/:mealId/:foodId', async (req, res, next) => {
+
+    //food objId is diff from fdcId
+    const mealId = req.params.mealId;
+    const foodId = req.params.foodId;
+
+    let meals = await deleteFood(mealId, foodId);
+
+    try {
+        console.log("in foods try bracks");
+        // const meal = await Meal.updateOne({"_id": mealId},
+        await Meal.updateOne({"_id": mealId},
+        {
+            "$pull": {
+                "foods": {
+                    "_id": foodId
+                }
+            }
+        });
+        const meal = await Meal.findById({"_id": mealId});
+        res.json(meal);
+    } catch(err) {
+        res.status(500).json({message: err.message});
+    }
+    
+});
+
+router.delete('/deleteMeal/:mealId', getMeal, async (req, res) => {
+    
+    try{
+        
+        await res.meal.remove()
+        res.json({message: `deleted meal ${req.params.mealId}`});
+        
+        // await Meal.findOneAndDelete({_id: mealId});
+        // res.json({message: `deleted meal ${mealId}`});
+    } catch (err) {
+        res.status(500).json({message: err.message });
+    }
+    
+})
+
+
+router.get('/fullSearch', async (req, res) => {
+    
+    let url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${req.query.query}&dataType=Foundation&api_key=${api_key}`
     // let url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${req.query.query}&dataType=Survey&api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9`
     let foodData = await getData(url);
 
@@ -149,19 +174,19 @@ router.get('/search', async (req, res) => {
     res.json(foodData);
 });
 
-router.get('/searchId/:id', async(req, res) => {
+router.get('/searchById/:id', async(req, res) => {
 
-    // let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.id}?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9&format=abridged`;
+    
 
     let nutrientIds = '208,255,601,203,307,204,606,645,646,205,209,291,269,'
-    let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.id}?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9&format=abridged`;
-    // let foodData = await getData(url);
-
-    // res.json(foodData);
+    let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.id}?api_key=${api_key}&format=abridged`;
+    // let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.id}?api_key=${api_key}&format=abridged&nutrients=${nutrientIds}`;
+ 
 
     let data = [];
 
-    let foodInfo = await searchById(data, url);
+    // let foodInfo = await searchByFdcId(data, url);
+    let foodInfo = await searchByFdcId(url);
 
     res.json(foodInfo);
 });
@@ -173,7 +198,7 @@ router.get('/searchMacros/:id', async(req, res) => {
 
     let data = [];
 
-    let foodInfo = await searchById(data, url);
+    let foodInfo = await searchByFdcId(data, url);
 
     res.json(foodInfo);
 });
@@ -184,6 +209,10 @@ router.get('/searchMicros/:id', async(req, res) => {
     let traceElements = '311,312,314,315,316,317,354';
     
     let vitamins = '319,320,321,322,323,324,325,326,327,328,428,429,430,404,405,406,410,415,416,417,418,421,450'
+
+    let url = `${fdcDatabase}${req.params.id}?api_key=${api_key}&nutrients=${vitamins}&format=abridged`
+
+    let data = await searchByFdcId(url);
 })
 
 router.get('/searchCaffeine/:id', async(req, res) => {
@@ -194,7 +223,7 @@ router.get('/searchCaffeine/:id', async(req, res) => {
 
     let data = [];
 
-    let foodInfo = await searchById(data, url);
+    let foodInfo = await searchByFdcId(data, url);
 
     res.json(foodInfo);
 })
@@ -223,17 +252,17 @@ router.get('/searchNamesList', async (req, res) => {
     //BRANDED= Branded
 
     let url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${req.query.query}&dataType=Foundation,Survey%20%28FNDDS%29,SR%20Legacy&api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9`
-    let data = [];
-    let items = await searchTest(data, url);
 
-    console.log(items.totalHits);
+    let data = await searchTest(url);
 
-    res.json(items);
 
-    // let data = searchTest(req.query.query);
 
-    // res.json(data);
+    // res.json(items);
+    res.json(data);
+
 })
+
+
 
 router.get('/searchBrandItem', async (req, res) => {
     // let url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${req.query.query}&dataType=Branded&api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9`
@@ -245,6 +274,30 @@ router.get('/searchBrandItem', async (req, res) => {
     res.json(items);
 
 })
+
+
+
+async function getMeal(req, res, next) {
+    let meal
+    try {
+        
+        meal = await Meal.findById(req.params.mealId)
+
+        if (meal == null) {
+            return res.status(404).json({ message: 'Cannot find meal' })
+        } 
+    } catch (err) {
+        // console.log("in getMeal catch ");
+        // console.log("meal", meal);
+        if (meal == null) {
+            return res.status(404).json({ message: 'Cannot find meal' })
+        }
+        return res.status(500).json({ message: err.message });
+    }
+
+    res.meal = meal;
+    next();
+}
 
 // router.get('/json-spec', async)
 

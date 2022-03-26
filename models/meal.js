@@ -1,59 +1,20 @@
 const mongoose = require('mongoose');
+const foodSchema = require('.//food').schema;
+const nutrientSchema = require('./nutrient').schema;
+// const nutrientSchema = require('./food').schema;
 
 
-const foodSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    calories: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    fat: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    carbohydrate: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    protein: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    }
-
-})
 
 const mealSchema = new mongoose.Schema({
 
-    children: [foodSchema],
+    // _id: String,
+    foods: [foodSchema],
 
-    //child: 
+    nutrientTotals: [nutrientSchema]
+    
 })
 
-module.exports = mongoose.model('Food', foodSchema)
+
+
+// module.exports = mongoose.model('Food', foodSchema)
+module.exports = mongoose.model('Meal', mealSchema)

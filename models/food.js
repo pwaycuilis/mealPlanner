@@ -1,90 +1,29 @@
 const mongoose = require('mongoose');
+const nutrientSchema = require('./nutrient').schema;
 
 
-// const macroSchema = new mongoose.Schema({
-//     fat: {
-//         amount: {
-//             type: Number,
-//             required: true
-//         },
-//         unit: {
-//             type: String,
-//             required: true
-//         }
-//     },
-//     carbohydrates: {
-//         amount: {
-//             type: Number,
-//             required: true
-//         },
-//         unit: {
-//             type: String,
-//             required: true
-//         }
-//     },
-//     protein: {
-//         amount: {
-//             type: Number,
-//             required: true
-//         },
-//         unit: {
-//             type: String,
-//             required: true
-//         }
-//     }
-
-// })
 
 const foodSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+    
+    fdcId: Number,
+    description: String,
+    dataType: String,
+    publicationDate: String,
+    ndbNumber: String,
+    amountInGrams: {
+        type: Number,
+        default: 100,
     },
-    calories: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    fat: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    carbohydrate: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    },
-    protein: {
-        amount: {
-            type: Number,
-            required: true
-        },
-        unit: {
-            type: String,
-            required: true
-        }
-    }
+    foodNutrients: [nutrientSchema]
+    
+    
 
 })
 
-const mealSchema = new mongoose.Schema({
+// const mealSchema = new mongoose.Schema({
 
-})
+//     children: [foodSchema],
+// })
 
 module.exports = mongoose.model('Food', foodSchema)
+// module.exports = mongoose.model('Nutrient', nutrientSchema)

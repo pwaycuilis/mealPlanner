@@ -1,0 +1,54 @@
+GET http://localhost:5000/api/foods/list
+
+###
+GET http://localhost:5000/api/foods/
+###
+
+GET http://localhost:5000/api/foods/meals
+###
+
+###
+GET http://localhost:5000/api/foods/searchNamesList/?query=greek yogurt
+
+### 
+GET http://localhost:5000/api/foods/fullSearch/?query=egg
+
+### /searchItem/:fdcId
+GET http://localhost:5000/api/foods/searchById/2011468
+
+
+
+###
+POST http://localhost:5000/api/foods/addToNewMeal/1102653
+
+###
+POST http://localhost:5000/api/foods/addToNewMeal/1098457?grams=175
+
+
+
+###egg = 748967 , greek yogurt = 330137, banana = 1102653
+POST http://localhost:5000/api/foods/addToMeal/623e431f3f519f92fdf63c12/748967
+
+### ///testing grams request query
+POST http://localhost:5000/api/foods/addToMeal/623f746b578a8a1ab637a9d6/747447?grams=100
+
+### deleteFood/:mealId/:foodId   
+//NOTE: foodId for delete is different from id used for search/add
+//specific food ObjectID (used below) is gotten from meal list after foodNutrients array as "_id":
+DELETE http://localhost:5000/api/foods/deleteFood/623ba49e5296b0d035623e8a/623d01e2abaf7e9d75d0293a
+
+
+###
+DELETE http://localhost:5000/api/foods/deleteMeal/623f88607b205eab8151d317
+
+###
+
+GET http://localhost:5000/api/foods/searchMacros/1102653
+
+###
+
+GET http://localhost:5000/api/foods/searchCaffeine/1984641
+
+
+###
+GET http://localhost:5000/api/foods/searchBrandItem/?query=banana
