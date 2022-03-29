@@ -4,51 +4,55 @@ GET http://localhost:5000/api/foods/list
 GET http://localhost:5000/api/foods/
 ###
 
-GET http://localhost:5000/api/foods/meals
-###
+GET http://localhost:5000/api/foods/meals/624370497002ccfecdc3fe74
 
 ###
-GET http://localhost:5000/api/foods/searchNamesList/?query=greek yogurt
+GET http://localhost:5000/api/foods/dailyValues
+###
+GET http://localhost:5000/api/foods/searchNamesList/?query=chick-fil-a
 
 ### 
-GET http://localhost:5000/api/foods/fullSearch/?query=egg
+GET http://localhost:5000/api/foods/fullSearch/?query=
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/2011468
+GET http://localhost:5000/api/foods/searchById/1101626
 
-
+//chicken 1098457,  from restaurant = 1098449
 
 ###
 POST http://localhost:5000/api/foods/addToNewMeal/1102653
 
 ###
-POST http://localhost:5000/api/foods/addToNewMeal/1098457?grams=175
+POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=300
 
 
 
-###egg = 748967 , greek yogurt = 330137, banana = 1102653
-POST http://localhost:5000/api/foods/addToMeal/623e431f3f519f92fdf63c12/748967
+###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
+POST http://localhost:5000/api/foods/addToMeal/624370497002ccfecdc3fe74/1101626?grams=200
 
-### ///testing grams request query
-POST http://localhost:5000/api/foods/addToMeal/623f746b578a8a1ab637a9d6/747447?grams=100
+###
+GET http://localhost:5000/api/foods/meals/compareToDv/624370497002ccfecdc3fe74
+
 
 ### deleteFood/:mealId/:foodId   
 //NOTE: foodId for delete is different from id used for search/add
 //specific food ObjectID (used below) is gotten from meal list after foodNutrients array as "_id":
-DELETE http://localhost:5000/api/foods/deleteFood/623ba49e5296b0d035623e8a/623d01e2abaf7e9d75d0293a
+DELETE http://localhost:5000/api/foods/deleteFood/623f746b578a8a1ab637a9d6/6240d7ec4e0a02fb59299aa2
 
 
 ###
-DELETE http://localhost:5000/api/foods/deleteMeal/623f88607b205eab8151d317
+DELETE http://localhost:5000/api/foods/deleteMeal/62410092f7bade29fbc33a
 
 ###
 
 GET http://localhost:5000/api/foods/searchMacros/1102653
 
 ###
+GET http://localhost:5000/api/foods/searchMicros/1102653
+###
 
 GET http://localhost:5000/api/foods/searchCaffeine/1984641
 
 
 ###
-GET http://localhost:5000/api/foods/searchBrandItem/?query=banana
+GET http://localhost:5000/api/foods/searchBrandItem/?query=chick-fil-a
