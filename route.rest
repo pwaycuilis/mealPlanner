@@ -4,18 +4,17 @@ GET http://localhost:5000/api/foods/list
 GET http://localhost:5000/api/foods/
 ###
 
-GET http://localhost:5000/api/foods/meals/624370497002ccfecdc3fe74
+GET http://localhost:5000/api/foods/meals
 
 ###
 GET http://localhost:5000/api/foods/dailyValues
 ###
-GET http://localhost:5000/api/foods/searchNamesList/?query=chick-fil-a
-
+GET http://localhost:5000/api/foods/searchNamesList/?query=beef
 ### 
 GET http://localhost:5000/api/foods/fullSearch/?query=
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/1101626
+GET http://localhost:5000/api/foods/searchById/170602
 
 //chicken 1098457,  from restaurant = 1098449
 
@@ -28,10 +27,10 @@ POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=300
 
 
 ###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
-POST http://localhost:5000/api/foods/addToMeal/624370497002ccfecdc3fe74/1101626?grams=200
+POST http://localhost:5000/api/foods/addToMeal/6244d9e0eaf3f1e9bdb88822/1101626?grams=200
 
 ###
-GET http://localhost:5000/api/foods/meals/compareToDv/624370497002ccfecdc3fe74
+GET http://localhost:5000/api/foods/meals/compareToDv/6244d9e0eaf3f1e9bdb88822
 
 
 ### deleteFood/:mealId/:foodId   
@@ -55,4 +54,4 @@ GET http://localhost:5000/api/foods/searchCaffeine/1984641
 
 
 ###
-GET http://localhost:5000/api/foods/searchBrandItem/?query=chick-fil-a
+GET http://localhost:5000/api/foods/searchBrandItem/?query=pure protein bar
