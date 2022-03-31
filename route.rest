@@ -9,12 +9,12 @@ GET http://localhost:5000/api/foods/meals
 ###
 GET http://localhost:5000/api/foods/dailyValues
 ###
-GET http://localhost:5000/api/foods/searchNamesList/?query=beef
+GET http://localhost:5000/api/foods/searchNamesList/?query=boiled egg
 ### 
 GET http://localhost:5000/api/foods/fullSearch/?query=
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/170602
+GET http://localhost:5000/api/foods/searchById/173424
 
 //chicken 1098457,  from restaurant = 1098449
 
@@ -27,10 +27,10 @@ POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=300
 
 
 ###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
-POST http://localhost:5000/api/foods/addToMeal/6244d9e0eaf3f1e9bdb88822/1101626?grams=200
+POST http://localhost:5000/api/foods/addToMeal/62461ec3ef8102c10eae5b1f/173424?grams=100
 
 ###
-GET http://localhost:5000/api/foods/meals/compareToDv/6244d9e0eaf3f1e9bdb88822
+GET http://localhost:5000/api/foods/meals/compareToDv/62461ec3ef8102c10eae5b1f
 
 
 ### deleteFood/:mealId/:foodId   
