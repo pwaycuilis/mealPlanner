@@ -4,6 +4,7 @@ const Meal =  require('../models/meal')
 const Nutrient = require('../models/nutrient');
 const res = require("express/lib/response");
 
+const api_key = 'mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9';
 
 async function getMeal(req, res, next) {
     let meal
@@ -32,7 +33,6 @@ async function getMeal(req, res, next) {
 
 
 const getData = async(url) => {
-    //let url = 'https://api.nal.usda.gov/fdc/v1/foods/search?query=apple&pageSize=2&api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9'
     
     try {
         const response = await fetch(url);
@@ -82,71 +82,110 @@ const postData = async() => {
     return response.json();
 }
 
-const listData = async() => {
-    let url = 'https://api.nal.usda.gov/fdc/v1/foods/list/?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9'
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-            {
-                "dataType": [
-                  "Foundation",
-                  "SR Legacy"
-                ],
-                "pageSize": 25,
-                "pageNumber": 2,
-                "sortBy": "dataType.keyword",
-                "sortOrder": "asc"
-              }
-        )
-    });
-    return response.json();
-};
+async function listData (req, res, next) {
 
-const searchByFdcId = async (url) => {
+    let format = req.query.format ? format : "unabridged";
+    // let dataType = req.query.dataType ? req.query.dataType : "Foundation"
+    let pageSize = req.query.pageSize ? req.query.pageSize : 25;
+    let pageNumber = req.query.pageNumber ? req.query.pageNumber : 1;
+    let url = `https://api.nal.usda.gov/fdc/v1/foods/list/?api_key=${api_key}&format=${format}&pageSize=${pageSize}&pageNumber=${pageNumber}`;
+ 
+
+    let data
+    try {
+        data = await getData(url);
+        // console.log("data", data);
+    }catch(err){
+        console.log({message: err.message});
+        return ({message: err.message});
+    }
+
+
+
+    res.data = data;
+    next();
+
+}
+
+async function getMultiple(req, res, next) {
+    let format = req.query.format ? format : "abridged";
+    // let dataType = req.query.dataType ? req.query.dataType : "Foundation"
+    let pageSize = req.query.pageSize ? req.query.pageSize : 25;
+    let pageNumber = req.query.pageNumber ? req.query.pageNumber : 1;
+    let fdcIds = req.query.fdcIds;
+    let url = `https://api.nal.usda.gov/fdc/v1/foods?api_key=${api_key}&fdcIds=${fdcIds}&format=${format}&pageSize=${pageSize}&pageNumber=${pageNumber}`;
+    // let url = `https://api.nal.usda.gov/fdc/v1/foods/list/?api_key=${api_key}&dataType=${dataType}`;
+    // let url = `https://api.nal.usda.gov/fdc/v1/foods/list/?api_key=${api_key}`;
+
+    let data
+    try {
+        data = await getData(url);
+        // console.log("data", data);
+    }catch(err){
+        console.log({message: err.message});
+        return ({message: err.message});
+    }
+
+
+
+    res.data = data;
+    next();
+
+}
+// const listData = async() => {
+//     let url = 'https://api.nal.usda.gov/fdc/v1/foods/list/?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9'
+//     const response = await fetch(url, {
+//         method: "POST",
+//         headers: {
+//             'accept': 'application/json',
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(
+//             {
+//                 "dataType": [
+//                   "Foundation",
+//                   "SR Legacy"
+//                 ],
+//                 "pageSize": 25,
+//                 "pageNumber": 2,
+//                 "sortBy": "dataType.keyword",
+//                 "sortOrder": "asc"
+//               }
+//         )
+//     });
+//     return response.json();
+// };
+
+async function searchByFdcId(req, res, next) {
+
+    const fdcId = req.params.fdcId;
+    console.log("req.params.fdcId", fdcId);
+    // let url = `https://api.nal.usda.gov/fdc/v1/food/${req.params.id}?api_key=${api_key}&format=abridged`;
+    let defaultNutrientIds = '208,255,204,205,203,291,269,301,303,304,305,306,307,309,606,645,646'
+
+    const nutrientIds = req.query.nutrientIds ? req.query.nutrientIds : defaultNutrientIds;
+    // const format = req.query.format ? req.query.format : "abridged";
+    let url = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=mDxmvhitceBL7z0dotECKMGuvpUJHfXuysOWCBL9&format=abridged&nutrients=${nutrientIds}`
 
     let data;
     try{
         data = await getData(url);
         if (data === 404){
-            return data;
+            return res.status(404).json({"message": "invalid URL or fdcId"})
         }
-        
+
     }catch(err){
-        console.log(err);
-        console.log(err.status);
-        // console.log("invalid url -- fdcId may be invalid");
         return({message: err.message});
-        // return ({message: err.message});
 
     }
+
+    res.data = data;
     
-    let nutrients = [];
-
-    let j = 0;
-
-
-    // console.log("data", data)
-
-    for (let i = 0; i < data.foodNutrients.length; i++) {
-        
-
-        if (data.foodNutrients[i].amount !== 0){
-            nutrients[j] = {
-                name: data.foodNutrients[i].name,
-                amount: data.foodNutrients[i].amount,
-                unitName: data.foodNutrients[i].unitName
-
-            }
-            j++;
-        }
-    };
-    return data;
+    next();
 
 }
+
+
 
 const simpleSearch = async ( url) => {
  
@@ -189,152 +228,22 @@ const searchBrandItem = async (data, url) => {
     return foodItem;
 }
 
-// const getNutrients = async(url, mealId, grams) => {
-
-//     grams = grams ? grams : 100;
-
-//     let data
-//     try {
-//         data = await searchByFdcId( url);
-//         if (data === 404){
-//             return data;
-//         }
-
-//     } catch(err){
-//         console.log({message: err.message})
-//         return({message: err.message});
-        
-//     }
-
-//     let food = new Food({
-//         fdcId: data.fdcId,
-//         description: data.description,
-//         amountInGrams: grams,
-//     })
-
-//     let meal
-//     if (!mealId){
-//         meal = new Meal({});
-//     } else {
-//         try{
-//             meal = Meal.findById({_id: mealId})
-//         } catch(err){
-//             console.log(err);
-//             return ({message: err.message});
-//         }
-//     }
-
-//     for(let i = 0; i < data.foodNutrients.length; i++) {
-//         let nutrient = new Nutrient({
-//             number: data.foodNutrients[i].number,
-//             name: data.foodNutrients[i].name,
-//             amount: data.foodNutrients[i].amount * (grams / 100),
-//             unitName: data.foodNutrients[i].unitName,
-
-//         })
-//         nutrient.amount = +nutrient.amount.toFixed(2);
-//         food.foodNutrients.push(nutrient);
-//         //
-//         if (!mealId) {
-//             meal.nutrientTotals.push(nutrient);
-//         } else{
-//             await addTotalsToMeal(mealId, nutrient);
-//         }
-        
-//     }
-
-    // try{
-    //     meal.foods.push(food);
-    //     // if (!meal)
-    //     await meal.save();
-    //     if (!mealId){
-    //         mealId = meal._id;
-    //     }
-    //     return mealId;
-         
-
-//     }catch(err){
-//         return ({message: err.message});
-//     }
 
 
-// }
+async function addToNewMeal (req, res, next) {
 
-const addItemToMeal = async (url, mealId, grams) => {
+    let grams = req.query.grams;
 
-    //const found = meals.some(meal => meal.id === parseInt(req.params.id));
     grams = grams ? grams : 100;
 
-    let data
-    try{
-        data = await searchByFdcId(url);
-        if (data === 404){
-            return data;
-        }
-        
-    }catch(err){
-        console.log(err)
-        return false;
-    }
+    let data = res.data;
+    // let data = res.locals.data;
+    // let grams = res.locals.grams;
+
+   
+    console.log("grams", grams);
+    console.log("data", data);
     
-    let food = new Food({
-        fdcId: data.fdcId,
-        description: data.description,
-        amountInGrams: grams,
-    })
-    
-
-    for(let i = 0; i < data.foodNutrients.length; i++) {
-        let nutrient = new Nutrient({
-            number: data.foodNutrients[i].number,
-            name: data.foodNutrients[i].name,
-            //amount: data.foodNutrients[i].amount;
-            amount: data.foodNutrients[i].amount * (grams / 100),
-            unitName: data.foodNutrients[i].unitName,
-            // derivationCode: data.foodNutrients[i].derivationCode,
-            // derivationDescription: data.foodNutrients[i].derivationDescription
-        })
-
-        nutrient.amount = +nutrient.amount.toFixed(2);
-
-        food.foodNutrients.push(nutrient);
-        let respon = await addTotalsToMeal(mealId, nutrient);
-
-    }
-
-    try{
-        let response = await Meal.findById({_id: mealId});
-        response.foods.push(food);
-        await response.save();
-        return response;
-
-
-    } catch (err){
-        return ({message: err.message});
-    }
-}
-
-
-const addToNewMeal = async (url, grams) => {
-
-    //const found = meals.some(meal => meal.id === parseInt(req.params.id));
-    grams = grams ? grams : 100;
-
-    let data;
-    try {
-        data = await searchByFdcId( url);
-        if (data === 404){
-            return data;
-        }
-
-    } catch(err){
-        console.log({message: err.message})
-        return({message: err.message});
-        
-    }
-    
-
-
     let food = new Food({
         fdcId: data.fdcId,
         description: data.description,
@@ -342,8 +251,66 @@ const addToNewMeal = async (url, grams) => {
     })
 
     let meal = new Meal({});
-    // console.log("food pre loop", food);
 
+    /////////TESTING SORT
+    nutrientSort(data.foodNutrients);
+
+    /////
+    data.foodNutrients.forEach(function(item){
+        let nutrient = new Nutrient({
+            number: item.number,
+            name: item.name,
+            amount: item.amount * (grams / 100),
+            unitName: item.unitName,
+        })
+        nutrient.amount = +nutrient.amount.toFixed(2);
+        food.foodNutrients.push(nutrient);
+        meal.nutrientTotals.push(nutrient);
+        
+    });
+
+
+    meal.foods.push(food);
+    // await meal.save();
+    try{
+        await meal.save();
+        res.meal = meal;  
+    } catch(err){
+        return res.status(500).json({ message: err.message});
+    }
+    
+    // console.log("meal from add", meal);
+    next();
+
+
+
+}
+async function addItemToMeal (req, res, next) {
+    const grams = req.query.grams ? req.query.grams : 100;
+    let data = res.data;
+
+
+    let food = new Food({
+        fdcId: data.fdcId,
+        description: data.description,
+        amountInGrams: grams
+    })
+
+    let meal = res.meal;
+
+    // this method not updating totals before response ?
+    // data.foodNutrients.forEach(async function(ele){
+    //     let nutrient = new Nutrient({
+    //         number: ele.number,
+    //         name: ele.name,
+    //         amount: ele.amount * (grams / 100),
+    //         unitName: ele.unitName
+    //     })
+
+    //     nutrient.amount = +nutrient.amount.toFixed(2);
+    //     food.foodNutrients.push(nutrient);
+    //     meal = await addTotalsToMeal(meal._id, nutrient)
+    // })
     for(let i = 0; i < data.foodNutrients.length; i++) {
         let nutrient = new Nutrient({
             number: data.foodNutrients[i].number,
@@ -356,27 +323,17 @@ const addToNewMeal = async (url, grams) => {
 
         food.foodNutrients.push(nutrient);
         
-        meal.nutrientTotals.push(nutrient);
+        meal = await addTotalsToMeal(meal._id, nutrient);
     }
 
-
-    try{
-              
-        meal.foods.push(food);
-        meal.save();
-        
-        let mealId = meal._id;
-
-        const data = await Meal.find({_id: mealId});
-        return mealId;
-
-
-    } catch (err){
-        console.log(err);
-        return false;
-    }
-
+    meal.foods.push(food);
+    await meal.save();
+    res.meal = meal;
+    console.log("res.meal from func", res.meal);
+    next();
 }
+
+
 
 const addTotalsToMeal = async(mealId, nutrient) => {
 
@@ -390,8 +347,11 @@ const addTotalsToMeal = async(mealId, nutrient) => {
                 meal.nutrientTotals[i].amount = +meal.nutrientTotals[i].amount.toFixed(2);
             }
         }
-        meal.save();
-        return true;
+        // meal.save();
+        // return true;
+        
+        await meal.save();
+        return meal;
 
     } catch (err){
         return false;
@@ -422,15 +382,31 @@ const deleteFood = async (mealId, foodId) => {
             }
         }
     }
-    meals.save();
+    await meals.save();
 
 
     return nutrs;
 
 }
 
-const nutrientSort = async () => {
 
+
+const nutrientSort = async (nutrients, sortBy, dir) => {
+
+    const sorter = sortBy ? sortBy : "number";
+    const direction = dir ? dir : "asc";
+
+    if (direction == "desc") {
+        nutrients.sort((a,b) => (b[sorter] > a[sorter]) ? 1 : -1);
+    } else if (direction == "asc") {
+        nutrients.sort((a, b) => (a[sorter] > b[sorter]) ? 1 : -1);
+    } else {
+        console.log(`${direction} is not a valid direction parameter`);
+        //return
+    }
+
+    return nutrients;
+    
 }
 
 module.exports = {
@@ -443,5 +419,7 @@ module.exports = {
     searchBrandItem,
     addItemToMeal,
     addToNewMeal,
-    deleteFood
+    deleteFood,
+    nutrientSort,
+    getMultiple
 }

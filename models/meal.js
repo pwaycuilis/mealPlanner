@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 const foodSchema = require('.//food').schema;
 const nutrientSchema = require('./nutrient').schema;
-// const nutrientSchema = require('./food').schema;
+
 
 
 
 const mealSchema = new mongoose.Schema({
 
-    // _id: String,
+    //name: String,
+    //date: 
     foods: [foodSchema],
 
     nutrientTotals: [nutrientSchema]
@@ -16,5 +17,5 @@ const mealSchema = new mongoose.Schema({
 
 
 
-// module.exports = mongoose.model('Food', foodSchema)
+
 module.exports = mongoose.model('Meal', mealSchema)

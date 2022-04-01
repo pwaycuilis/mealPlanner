@@ -1,42 +1,39 @@
-GET http://localhost:5000/api/foods/list
+GET http://localhost:5000/api/foods/list?pageNumber=2
 
 ###
-GET http://localhost:5000/api/foods/
-###
 
-GET http://localhost:5000/api/foods/meals
+
+GET http://localhost:5000/api/foods/meals/624626cb2d32bcfb76a0f780
 
 ###
-GET http://localhost:5000/api/foods/dailyValues
-###
-GET http://localhost:5000/api/foods/searchNamesList/?query=boiled egg
+GET http://localhost:5000/api/foods/searchForId/?query=whole wheat bread
 ### 
-GET http://localhost:5000/api/foods/fullSearch/?query=
+GET http://localhost:5000/api/foods/fullSearch/?query=whole wheat bread
+
+####
+GET http://localhost:5000/api/foods/searchMultiple?fdcIds=748967,330137
+###
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/173424
+GET http://localhost:5000/api/foods/searchById/1100541
 
 //chicken 1098457,  from restaurant = 1098449
-
 ###
-POST http://localhost:5000/api/foods/addToNewMeal/1102653
+GET http://localhost:5000/api/foods/searchBrandItem/?query=chicken breast
 
 ###
 POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=300
 
 
-
 ###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
-POST http://localhost:5000/api/foods/addToMeal/62461ec3ef8102c10eae5b1f/173424?grams=100
+POST http://localhost:5000/api/foods/addToMeal/62476063d7b2f31a8559026e/330137?grams=300
 
 ###
-GET http://localhost:5000/api/foods/meals/compareToDv/62461ec3ef8102c10eae5b1f
-
 
 ### deleteFood/:mealId/:foodId   
 //NOTE: foodId for delete is different from id used for search/add
 //specific food ObjectID (used below) is gotten from meal list after foodNutrients array as "_id":
-DELETE http://localhost:5000/api/foods/deleteFood/623f746b578a8a1ab637a9d6/6240d7ec4e0a02fb59299aa2
+DELETE http://localhost:5000/api/foods/deleteFood/624626cb2d32bcfb76a0f780/6246273e2d32bcfb76a0f784
 
 
 ###
@@ -44,6 +41,12 @@ DELETE http://localhost:5000/api/foods/deleteMeal/62410092f7bade29fbc33a
 
 ###
 
+###
+GET http://localhost:5000/api/foods/dailyValues
+
+###
+GET http://localhost:5000/api/foods/meals/compareToDv/624626cb2d32bcfb76a0f780
+###
 GET http://localhost:5000/api/foods/searchMacros/1102653
 
 ###
@@ -54,4 +57,3 @@ GET http://localhost:5000/api/foods/searchCaffeine/1984641
 
 
 ###
-GET http://localhost:5000/api/foods/searchBrandItem/?query=pure protein bar
