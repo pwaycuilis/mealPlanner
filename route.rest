@@ -3,50 +3,75 @@ GET http://localhost:5000/api/foods/list?pageNumber=2
 ###
 
 
-GET http://localhost:5000/api/foods/meals/624626cb2d32bcfb76a0f780
-
+GET http://localhost:5000/api/foods/meals/
 ###
-GET http://localhost:5000/api/foods/searchForId/?query=whole wheat bread
-### 
-GET http://localhost:5000/api/foods/fullSearch/?query=whole wheat bread
-
-####
-GET http://localhost:5000/api/foods/searchMultiple?fdcIds=748967,330137
-###
+GET http://localhost:5000/api/foods/searchForId/?query=banana
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/1100541
+GET http://localhost:5000/api/foods/searchById/1103055
 
 //chicken 1098457,  from restaurant = 1098449
 ###
-GET http://localhost:5000/api/foods/searchBrandItem/?query=chicken breast
+GET http://localhost:5000/api/foods/searchBrandItem/?query=
 
 ###
-POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=300
+POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=126
 
 
 ###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
-POST http://localhost:5000/api/foods/addToMeal/62476063d7b2f31a8559026e/330137?grams=300
+POST http://localhost:5000/api/foods/addToMeal/624b84b420233459c3a32b2b/169105?grams=100
 
 ###
 
 ### deleteFood/:mealId/:foodId   
 //NOTE: foodId for delete is different from id used for search/add
 //specific food ObjectID (used below) is gotten from meal list after foodNutrients array as "_id":
-DELETE http://localhost:5000/api/foods/deleteFood/624626cb2d32bcfb76a0f780/6246273e2d32bcfb76a0f784
+DELETE http://localhost:5000/api/foods/deleteFood/624b77e72ea51bc1082d4819/624b81b2e8eef8922960e6bf
 
 
 ###
 DELETE http://localhost:5000/api/foods/deleteMeal/62410092f7bade29fbc33a
 
 ###
+POST http://localhost:5000/api/foods/createCustomFood
+Content-Type: application/json
 
+{
+    "description": "Test",
+    "foodNutrients": [
+        {
+            "number": "203",
+            "name": "Protein",
+            "amount": 20,
+            "unitName": "G"
+        },
+        {
+            "number": "204",
+            "name": "Total lipid (fat)",
+            "amount": 30,
+            "unitName": "G"
+        }
+        
+    ]
+}
+###
+POST http://localhost:5000/api/foods/addCustomFoodToMeal/624cc622cce44b0742f7fdbe/624cc5a95c8ece893120050e
 ###
 GET http://localhost:5000/api/foods/dailyValues
 
 ###
-GET http://localhost:5000/api/foods/meals/compareToDv/624626cb2d32bcfb76a0f780
+GET http://localhost:5000/api/foods/meals/compareToDv/624b84b420233459c3a32b2b
 ###
+
+### 
+GET http://localhost:5000/api/foods/searchPortionSizes/1102653
+###
+GET http://localhost:5000/api/foods/fullSearch/?query=orange
+
+####
+GET http://localhost:5000/api/foods/searchMultiple?fdcIds=748967,330137
+###
+
 GET http://localhost:5000/api/foods/searchMacros/1102653
 
 ###
