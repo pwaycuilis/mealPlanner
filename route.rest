@@ -1,84 +1,93 @@
-GET http://localhost:5000/api/foods/list?pageNumber=2
-
+GET http://localhost:5000/api/foods/list?pageNumber=1
 ###
 
-
-GET http://localhost:5000/api/foods/meals/
+GET http://localhost:5000/api/foods/meals/62549ddd753be65f481b7367
 ###
-GET http://localhost:5000/api/foods/searchForId/?query=banana
+GET http://localhost:5000/api/foods/searchForId/?query=hard boiled egg
+###
+GET http://localhost:5000/api/foods/searchBrandItem/?query=ultra-filtered milk
+###
 
 ### /searchItem/:fdcId
-GET http://localhost:5000/api/foods/searchById/1103055
+GET http://localhost:5000/api/foods/searchById/330137
 
+###
 //chicken 1098457,  from restaurant = 1098449
+GET http://localhost:5000/api/foods/searchMultiple?fdcIds=1101444,173150
 ###
-GET http://localhost:5000/api/foods/searchBrandItem/?query=
 
+### 
+GET http://localhost:5000/api/foods/searchPortionSizes/173424
 ###
-POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=126
 
+POST http://localhost:5000/api/foods/addToNewMeal/1102653?grams=250
 
 ###egg = 748967 , greek yogurt = 330137, banana = 1102653, 1102652 = avacado
-POST http://localhost:5000/api/foods/addToMeal/624b84b420233459c3a32b2b/169105?grams=100
+POST http://localhost:5000/api/foods/addToMeal/6254aa0de739222a276aff13/173424?grams=100
 
 ###
 
 ### deleteFood/:mealId/:foodId   
 //NOTE: foodId for delete is different from id used for search/add
 //specific food ObjectID (used below) is gotten from meal list after foodNutrients array as "_id":
-DELETE http://localhost:5000/api/foods/deleteFood/624b77e72ea51bc1082d4819/624b81b2e8eef8922960e6bf
-
+DELETE http://localhost:5000/api/foods/deleteFoodFromMeal/62549ddd753be65f481b7367/62549e0c753be65f481b736b
 
 ###
-DELETE http://localhost:5000/api/foods/deleteMeal/62410092f7bade29fbc33a
+PATCH http://localhost:5000/api/foods/meal/6254aa0de739222a276aff13
+Content-Type: application/json
+
+{
+    "description": "Daily Totals from Monday, 4/11/22"
+}
+###
+DELETE http://localhost:5000/api/foods/deleteMeal/624e17fa4f48cbd712bfe6d4
 
 ###
 POST http://localhost:5000/api/foods/createCustomFood
 Content-Type: application/json
 
 {
-    "description": "Test",
+    "description": "test",
     "foodNutrients": [
         {
             "number": "203",
             "name": "Protein",
-            "amount": 20,
+            "amount": 40,
             "unitName": "G"
         },
         {
             "number": "204",
             "name": "Total lipid (fat)",
-            "amount": 30,
+            "amount": 14,
             "unitName": "G"
         }
-        
+
     ]
 }
 ###
-POST http://localhost:5000/api/foods/addCustomFoodToMeal/624cc622cce44b0742f7fdbe/624cc5a95c8ece893120050e
+GET http://localhost:5000/api/foods/customFoodList
+###
+POST http://localhost:5000/api/foods/addCustomFoodToMeal/6254aa0de739222a276aff13/624e0e8867fbe02471cb8b98?grams=150
+###
+
+DELETE http://localhost:5000/api/foods/deleteCustomFood/
 ###
 GET http://localhost:5000/api/foods/dailyValues
 
 ###
-GET http://localhost:5000/api/foods/meals/compareToDv/624b84b420233459c3a32b2b
+GET http://localhost:5000/api/foods/meals/compareToDV/6254aa0de739222a276aff13
 ###
 
-### 
-GET http://localhost:5000/api/foods/searchPortionSizes/1102653
-###
+
 GET http://localhost:5000/api/foods/fullSearch/?query=orange
 
 ####
-GET http://localhost:5000/api/foods/searchMultiple?fdcIds=748967,330137
-###
 
 GET http://localhost:5000/api/foods/searchMacros/1102653
 
 ###
 GET http://localhost:5000/api/foods/searchMicros/1102653
 ###
-
-GET http://localhost:5000/api/foods/searchCaffeine/1984641
 
 
 ###
