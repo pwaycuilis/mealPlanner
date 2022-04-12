@@ -13,7 +13,7 @@ U.S. Department of Agriculture, Agricultural Research Service. FoodData Central,
 | /api/foods/searchBrandItem |  GET           | Returns list of foods including brand items based on search (query) keywords |
 | /api/foods/searchMultiple |    GET   | Returns data for multiple food items (comma separated). (required queries: fdcIds) (optional queries: format, pageSize, pageNumber, nutrientNums)      |
 | /api/foods/searchPortionSizes/{fdcId}| GET  | Returns list of portion sizes for item                  | 
-| /api/foods/meals/addToNewMeal/{fdcid}| POST  | Creates and returns new meal object containing food item (optional query parameter to specify grams: default 100) |
+| /api/foods/meals/addToNewMeal/{fdcId}| POST  | Creates and returns new meal object containing food item (optional query parameter to specify grams: default 100) |
 | /api/foods/meals/addToMeal/{mealId}/{fdcId} | POST | Updates and returns specified meal with updated nutritional info from food (optional grams query) |
 | /api/foods/deleteFoodFromMeal/{mealId}/{foodId} | DELETE | Removes food object from meal, updates nutrient values and returns updated meal (NOTE: foodid is different from fdcid and is found in meal data listed after specific food's foodNutrients array as "_id")|
 | /api/foods/deleteMeal/{mealId} | DELETE     | Removes meal from database      |
