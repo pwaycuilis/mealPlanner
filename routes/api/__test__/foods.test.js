@@ -1,7 +1,7 @@
 const app = require('../../../app');
 const request = require('supertest');
 
-const validMealId = '623f746b578a8a1ab637a9d6';
+const validMealId = '6244d9e0eaf3f1e9bdb88822';
 const invalidMealId = '99999999999999999';
 
 const validFdcId = '1102653'

@@ -14,16 +14,14 @@ const foodSchema = new mongoose.Schema({
         type: Number,
         default: 100,
     },
-    foodNutrients: [nutrientSchema]
-    
-    
+    foodNutrients: [nutrientSchema],
 
+    
 })
 
-// const mealSchema = new mongoose.Schema({
 
-//     children: [foodSchema],
-// })
+
+
 
 module.exports = mongoose.model('Food', foodSchema)
-// module.exports = mongoose.model('Nutrient', nutrientSchema)
+

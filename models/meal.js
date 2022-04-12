@@ -7,8 +7,11 @@ const nutrientSchema = require('./nutrient').schema;
 
 const mealSchema = new mongoose.Schema({
 
-    //name: String,
-    //date: 
+    description: String,
+    date: {
+        type: Date,
+        default: Date.now
+    },
     foods: [foodSchema],
 
     nutrientTotals: [nutrientSchema]
